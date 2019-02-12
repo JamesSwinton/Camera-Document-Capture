@@ -7,7 +7,7 @@
     <RelativeLayout
         android:id="@+id/base_layout"
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent" >
+        android:layout_height="fill_parent">
 
         <!-- Toolbar -->
         <android.support.v7.widget.Toolbar
@@ -31,5 +31,4 @@
 
     </RelativeLayout>
     <!-- END BASE LAYOUT -->
-
 </layout>
