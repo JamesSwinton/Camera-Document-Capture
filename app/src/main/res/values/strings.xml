@@ -1,3 +1,16 @@
 <resources>
-    <string name="app_name">CTTDocCapture</string>
+    <!-- Global Strings -->
+    <string name="app_name">CTT Document Capture</string>
+
+    <!-- File / Directory Strings -->
+
+
+    <!-- Capture Activity Strings -->
+
+
+    <!-- Dynamsoft Strings -->
+    <string name="dynamsoft_license">
+        t0068NQAAALIoxwoEDRb4qLOgAs+vmoa0Z6skV14Usxqg0IvjWKKv8f6Dm0QbPpk4BSErjMf0SIndAnWlUHDnT3uDYtP5/ko=
+    </string>
+
 </resources>
