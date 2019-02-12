@@ -15,7 +15,7 @@ public class CaptureActivity extends AppCompatActivity {
 
 
     // Variables
-    ActivityCaptureBinding mDataBinding = null;
+    private ActivityCaptureBinding mDataBinding = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
