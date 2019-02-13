@@ -21,8 +21,11 @@
                     android:id="@+id/barcode_text"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_margin="2dp"
+                    android:layout_marginTop="4dp"
+                    android:layout_marginStart="4dp"
+                    android:layout_marginEnd="4dp"
                     android:singleLine="true"
+                    android:focusable="false"
                     android:inputType="none"
                     android:textSize="12pt"
                     android:hint="Barcode"/>
@@ -32,6 +35,8 @@
                 android:id="@+id/image_preview"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:layout_margin="10dp"
+                android:scaleType="fitXY"
                 android:layout_below="@id/barcode_input_layout"/>
 
             <android.support.design.widget.FloatingActionButton
@@ -42,6 +47,7 @@
                 android:layout_alignParentEnd="true"
                 android:layout_margin="16dp"
                 android:src="@drawable/ic_save"
+                android:enabled="false"
                 app:fabSize="normal"
                 app:backgroundTint="@color/zebraGreen" />
 
