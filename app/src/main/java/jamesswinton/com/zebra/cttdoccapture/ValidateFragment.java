@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
 import com.dynamsoft.barcode.BarcodeReader;
@@ -17,6 +18,8 @@ import com.dynamsoft.barcode.BarcodeReaderException;
 import com.dynamsoft.barcode.TextResult;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 import jamesswinton.com.zebra.cttdoccapture.databinding.FragmentValidateBinding;
 
@@ -32,8 +35,9 @@ public class ValidateFragment extends Fragment {
 
 
     // Variables
-    private static String mDecodedBarcode = null;
+    private static String mSelectedBarcode = null;
     private static BarcodeReader mBarcodeReader = null;
+    private static List<String> mDecodedBarcodes = new ArrayList<>();
 
     private FragmentValidateBinding mDataBinding = null;
 
@@ -78,7 +82,9 @@ public class ValidateFragment extends Fragment {
         if (tempImage.exists()) {
             // Create New File
             File permImage = new File(PERM_IMAGE_DIRECTORY_FILE_PATH
-                    + File.separator + mDecodedBarcode + ".jpg");
+                    + File.separator
+                    + mDataBinding.barcodeSpinner.getSelectedItem().toString()
+                    + ".jpg");
             // Rename tempImage to permImage
             if (tempImage.renameTo(permImage)) {
                 Toast.makeText(getContext(), "File Created: " + permImage.getAbsolutePath(),
@@ -116,28 +122,39 @@ public class ValidateFragment extends Fragment {
 
     private void processImage() {
         try {
+            // Clear Existing Barcodes
+            mDecodedBarcodes = new ArrayList<>();
             // Init Barcode Reader
             if (mBarcodeReader == null) {
                 mBarcodeReader = new BarcodeReader(getString(R.string.dynamsoft_license));
             }
             // Attempt Decode
             TextResult[] decodeResults = mBarcodeReader.decodeFile(getImagePath(), "");
-            // Get Results
+            // Loop results
             if (decodeResults != null && decodeResults.length > 0) {
-                // Set Variable To Barcode
-                mDecodedBarcode = decodeResults[0].barcodeText;
-                // Enable Save
+                // Add Results to Array
+                for (TextResult barcode : decodeResults) {
+                    mDecodedBarcodes.add(barcode.barcodeText);
+                }
+                // Enable Save Button
                 mDataBinding.saveImage.setEnabled(true);
             } else {
-                // Set Variable to Generic string
-                mDecodedBarcode = getString(R.string.error_message_no_image_decode);
                 // Show Error
                 App.showErrorDialog(getContext(), getString(R.string.error_message_no_image_decode));
                 // Disable Save
                 mDataBinding.saveImage.setEnabled(false);
+                // Set Selected Barcode to Generic String
+                mSelectedBarcode = getString(R.string.error_message_no_image_decode);
+                // Add Generic string to List
+                mDecodedBarcodes.add(mSelectedBarcode);
             }
-            // Set Barcode Text
-            mDataBinding.barcodeText.setText(mDecodedBarcode);
+            // Init Spinner Adapter
+            ArrayAdapter<String> adapter = new ArrayAdapter<>(
+                    getContext() == null ? App.mContext : getContext(),
+                    android.R.layout.simple_spinner_item, mDecodedBarcodes);
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            // Set Adapter on Spinner
+            mDataBinding.barcodeSpinner.setAdapter(adapter);
         } catch (BarcodeReaderException e) {
             Log.e(TAG, "BarcodeReaderException: " + e.getMessage());
             App.showErrorDialog(getContext(),
