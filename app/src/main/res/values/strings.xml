@@ -5,12 +5,23 @@
     <!-- File / Directory Strings -->
 
 
-    <!-- Capture Activity Strings -->
+    <!-- CaptureFragment Strings -->
+    <string name="scan_new_document_icon">Scan New Document Icon</string>
+    <string name="tap_to_scan_new_document">Tap to scan new document</string>
+    <string name="temporary_image_file_name">TEMP_%1$s</string>
+
+    <!-- ValidateFragment Strings -->
 
 
     <!-- Dynamsoft Strings -->
     <string name="dynamsoft_license">
         t0068NQAAALIoxwoEDRb4qLOgAs+vmoa0Z6skV14Usxqg0IvjWKKv8f6Dm0QbPpk4BSErjMf0SIndAnWlUHDnT3uDYtP5/ko=
     </string>
+
+    <!-- Error Dialog Strings -->
+    <string name="error_message_no_valid_parent">No valid parent Activity</string>
+    <string name="error_message_no_image_path">Could not find image path</string>
+    <string name="error_message_failed_create_temp_image">the temporary image file.  Please try again.</string>
+
 
 </resources>
