@@ -13,23 +13,21 @@
             android:layout_height="match_parent"
             android:orientation="vertical">
 
-            <android.support.design.widget.TextInputLayout
-                android:id="@+id/barcode_input_layout"
+            <TextView
+                android:id="@+id/spinnerLabel"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-                <EditText
-                    android:id="@+id/barcode_text"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
-                    android:layout_marginStart="4dp"
-                    android:layout_marginEnd="4dp"
-                    android:singleLine="true"
-                    android:focusable="false"
-                    android:inputType="none"
-                    android:textSize="12pt"
-                    android:hint="Barcode"/>
-            </android.support.design.widget.TextInputLayout>
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:text="Decoded Barcodes"
+                style="@style/InputLabel" />
+
+            <Spinner
+                android:id="@+id/barcode_spinner"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="4dp"
+                android:layout_marginEnd="4dp"
+                android:layout_below="@id/spinnerLabel"/>
 
             <ImageView
                 android:id="@+id/image_preview"
@@ -37,7 +35,8 @@
                 android:layout_height="match_parent"
                 android:layout_margin="10dp"
                 android:scaleType="fitXY"
-                android:layout_below="@id/barcode_input_layout"/>
+                android:layout_centerInParent="true"
+                android:layout_below="@id/barcode_spinner"/>
 
             <android.support.design.widget.FloatingActionButton
                 android:id="@+id/save_image"
