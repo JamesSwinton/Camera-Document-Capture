@@ -3,8 +3,15 @@ package jamesswinton.com.zebra.cttdoccapture;
 import android.databinding.DataBindingUtil;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
+
+import java.io.File;
 
 import jamesswinton.com.zebra.cttdoccapture.databinding.ActivityCaptureBinding;
+
+import static jamesswinton.com.zebra.cttdoccapture.App.BASE_DIRECTORY_FILE_PATH;
+import static jamesswinton.com.zebra.cttdoccapture.App.PERM_IMAGE_DIRECTORY_FILE_PATH;
+import static jamesswinton.com.zebra.cttdoccapture.App.TEMP_IMAGE_DIRECTORY_FILE_PATH;
 
 public class CaptureActivity extends AppCompatActivity {
 
@@ -26,7 +33,41 @@ public class CaptureActivity extends AppCompatActivity {
 
         // Init Toolbar
         setSupportActionBar(mDataBinding.toolbar);
-        getSupportActionBar().setTitle("CTT Document Capture");
-        getSupportActionBar().setSubtitle("Capture, process & store documents");
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setTitle("CTT Document Capture");
+            getSupportActionBar().setSubtitle("Capture, process & store documents");
+        }
+
+        // Create Directories if required
+        initDirectories();
+
+        // Show Capture Fragment
+        showCaptureFragment(savedInstanceState);
+    }
+
+    private void initDirectories() {
+        File baseDirectory = new File(BASE_DIRECTORY_FILE_PATH);
+        if (!baseDirectory.exists()) {
+            Log.i(TAG, "Base Directory Created: " + baseDirectory.mkdirs());
+        }
+
+        File tempImageDirectory = new File(TEMP_IMAGE_DIRECTORY_FILE_PATH);
+        if (!tempImageDirectory.exists()) {
+            Log.i(TAG, "Temp Image Directory Created: " + tempImageDirectory.mkdirs());
+        }
+
+        File permImageDirectory = new File(PERM_IMAGE_DIRECTORY_FILE_PATH);
+        if (!permImageDirectory.exists()) {
+            Log.i(TAG, "Perm Image Directory Created: " + permImageDirectory.mkdirs());
+        }
+    }
+
+    private void showCaptureFragment(Bundle savedInstanceState) {
+        // Only Display Fragment if required
+        if (savedInstanceState == null) {
+            getSupportFragmentManager().beginTransaction()
+                    .add(R.id.fragment_container, new CaptureFragment())
+                    .commit();
+        }
     }
 }
