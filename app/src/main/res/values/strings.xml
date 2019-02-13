@@ -21,7 +21,10 @@
     <!-- Error Dialog Strings -->
     <string name="error_message_no_valid_parent">No valid parent Activity</string>
     <string name="error_message_no_image_path">Could not find image path</string>
-    <string name="error_message_failed_create_temp_image">the temporary image file.  Please try again.</string>
-
-
+    <string name="error_message_failed_create_temp_image">Failed to create the temporary image file. \n\nPlease try again.</string>
+    <string name="error_message_no_image_decode">Could not decode image</string>
+    <string name="error_message_barcode_reader_exception">BarcodeReaderException: %1$s</string>
+    <string name="error_message_generic_exception">Exception: %1$s</string>
+    <string name="error_message_cant_create_perm_image">Failed to create permanent image file. \n\nPlease try again.</string>
+    <string name="error_message_cant_delete_temp_image">Failed to delete temporary image file. \n\nPlease try again.</string>
 </resources>
