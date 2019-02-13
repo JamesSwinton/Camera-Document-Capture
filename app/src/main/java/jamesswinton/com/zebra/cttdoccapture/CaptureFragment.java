@@ -8,12 +8,10 @@ import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.FileProvider;
-import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import java.io.File;
 import java.io.IOException;
@@ -78,6 +76,7 @@ public class CaptureFragment extends Fragment {
                             getActivity().getSupportFragmentManager()
                                     .beginTransaction()
                                     .replace(R.id.fragment_container, validateFragment)
+                                    .addToBackStack(null)
                                     .commit();
                         } else {
                             App.showErrorDialog(getContext(),
@@ -87,7 +86,6 @@ public class CaptureFragment extends Fragment {
                         App.showErrorDialog(getContext(),
                                 getString(R.string.error_message_no_image_path));
                     }
-
                     break;
             }
         }
