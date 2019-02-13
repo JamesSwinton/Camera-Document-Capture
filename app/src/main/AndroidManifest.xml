@@ -19,6 +19,18 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         tools:ignore="AllowBackup,GoogleAppIndexingWarning">
 
+        <!-- START FILE PROVIDER -->
+        <provider
+            android:name="android.support.v4.content.FileProvider"
+            android:authorities="jamesswinton.com.zebra.cttsimulscan.fileprovider"
+            android:grantUriPermissions="true"
+            android:exported="false">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths"/>
+        </provider>
+        <!-- END FILE PROVIDER -->
+
         <!-- Activities -->
         <activity android:name=".CaptureActivity">
             <intent-filter>
