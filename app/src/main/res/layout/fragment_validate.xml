@@ -23,6 +23,7 @@
                     android:layout_height="wrap_content"
                     android:layout_margin="2dp"
                     android:singleLine="true"
+                    android:inputType="none"
                     android:textSize="12pt"
                     android:hint="Barcode"/>
             </android.support.design.widget.TextInputLayout>
