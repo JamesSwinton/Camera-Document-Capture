@@ -17,8 +17,7 @@
         android:theme="@style/AppTheme"
         android:supportsRtl="true"
         android:roundIcon="@mipmap/ic_launcher_round"
-        tools:ignore="AllowBackup,GoogleAppIndexingWarning"
-        tools:node="replace">
+        tools:ignore="AllowBackup,GoogleAppIndexingWarning">
 
         <!-- START FILE PROVIDER -->
         <provider
@@ -39,6 +38,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity android:name=".CameraActivity"/>
         <!-- End Activities -->
 
     </application>
