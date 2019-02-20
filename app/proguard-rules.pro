@@ -19,3 +19,25 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+
+#keep eventbus
+-keep @org.greenrobot.eventbus.Subscribe class * {*;}
+-keep,allowobfuscation @interface org.greenrobot.eventbus.Subscribe
+-keepclassmembernames class * {
+    @org.greenrobot.eventbus.Subscribe *;
+}
+-keepattributes *Annotation*
+-keepclassmembers class **{
+    @org.greenrobot.eventbus.Subscribe <methods>;
+}
+-keep enum org.greenrobot.eventbus.ThreadMode {*;}
+-keepclassmembers class * extends org.greenrobot.eventbus.util.ThrowableFailureEvent{
+   <init>(java.lang.Throwable);
+}
+
+#keep litepal
+-keep class org.litepal.**{*;}
+-keepclassmembers class org.litepal.**{*;}
+#keep DCS model
+-keep class com.dynamsoft.camerasdk.model.internal.**{*;}
+-keepclassmembers class com.dynamsoft.camerasdk.model.internal.**{*;}
