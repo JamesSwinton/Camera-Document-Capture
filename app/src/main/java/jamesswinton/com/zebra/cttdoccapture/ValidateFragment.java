@@ -1,9 +1,9 @@
 package jamesswinton.com.zebra.cttdoccapture;
 
 import android.content.Context;
-import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.CircularProgressDrawable;
 import android.util.Log;
@@ -11,8 +11,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.dynamsoft.barcode.BarcodeReader;
 import com.dynamsoft.barcode.BarcodeReaderException;
 import com.dynamsoft.barcode.TextResult;
@@ -20,8 +23,6 @@ import com.dynamsoft.barcode.TextResult;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-
-import jamesswinton.com.zebra.cttdoccapture.databinding.FragmentValidateBinding;
 
 import static jamesswinton.com.zebra.cttdoccapture.App.PERM_IMAGE_DIRECTORY_FILE_PATH;
 import static jamesswinton.com.zebra.cttdoccapture.App.TEMP_IMAGE_PATH_ARG;
@@ -35,11 +36,13 @@ public class ValidateFragment extends Fragment {
 
 
     // Variables
+    private ImageView mImagePreview;
+    private Spinner mBarcodeSpinner;
+    private FloatingActionButton mSaveButton, mDeleteButton;
+
     private static String mSelectedBarcode = null;
     private static BarcodeReader mBarcodeReader = null;
     private static List<String> mDecodedBarcodes = new ArrayList<>();
-
-    private FragmentValidateBinding mDataBinding = null;
 
     public ValidateFragment() {
         // Required empty public constructor
@@ -52,8 +55,11 @@ public class ValidateFragment extends Fragment {
         View fragmentView = inflater.inflate(R.layout.fragment_validate, container,
                 false);
 
-        // Init DataBinding
-        mDataBinding = DataBindingUtil.bind(fragmentView);
+        // Get UI Elements
+        mSaveButton = fragmentView.findViewById(R.id.save_image);
+        mDeleteButton = fragmentView.findViewById(R.id.delete_image);
+        mImagePreview = fragmentView.findViewById(R.id.image_preview);
+        mBarcodeSpinner = fragmentView.findViewById(R.id.barcode_spinner);
 
         // Return View
         return fragmentView;
@@ -68,8 +74,8 @@ public class ValidateFragment extends Fragment {
             // Attempt Decode
             processImage();
             // Set Click Listeners
-            mDataBinding.saveImage.setOnClickListener(view -> saveImage());
-            mDataBinding.deleteImage.setOnClickListener(view -> deleteImage());
+            mSaveButton.setOnClickListener(view -> saveImage());
+            mDeleteButton.setOnClickListener(view -> deleteImage());
         } else {
             App.showErrorDialog(getContext(), getString(R.string.error_message_no_image_path));
         }
@@ -83,7 +89,7 @@ public class ValidateFragment extends Fragment {
             // Create New File
             File permImage = new File(PERM_IMAGE_DIRECTORY_FILE_PATH
                     + File.separator
-                    + mDataBinding.barcodeSpinner.getSelectedItem().toString()
+                    + mBarcodeSpinner.getSelectedItem().toString()
                     + ".jpg");
             // Rename tempImage to permImage
             if (tempImage.renameTo(permImage)) {
@@ -126,7 +132,7 @@ public class ValidateFragment extends Fragment {
             mDecodedBarcodes = new ArrayList<>();
             // Init Barcode Reader
             if (mBarcodeReader == null) {
-                mBarcodeReader = new BarcodeReader(getString(R.string.dynamsoft_license));
+                mBarcodeReader = new BarcodeReader(getString(R.string.dynamsoft_scanner_license));
             }
             // Attempt Decode
             TextResult[] decodeResults = mBarcodeReader.decodeFile(getImagePath(), "");
@@ -137,12 +143,12 @@ public class ValidateFragment extends Fragment {
                     mDecodedBarcodes.add(barcode.barcodeText);
                 }
                 // Enable Save Button
-                mDataBinding.saveImage.setEnabled(true);
+                mSaveButton.setEnabled(true);
             } else {
                 // Show Error
                 App.showErrorDialog(getContext(), getString(R.string.error_message_no_image_decode));
                 // Disable Save
-                mDataBinding.saveImage.setEnabled(false);
+                mSaveButton.setEnabled(false);
                 // Set Selected Barcode to Generic String
                 mSelectedBarcode = getString(R.string.error_message_no_image_decode);
                 // Add Generic string to List
@@ -154,7 +160,7 @@ public class ValidateFragment extends Fragment {
                     android.R.layout.simple_spinner_item, mDecodedBarcodes);
             adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
             // Set Adapter on Spinner
-            mDataBinding.barcodeSpinner.setAdapter(adapter);
+            mBarcodeSpinner.setAdapter(adapter);
         } catch (BarcodeReaderException e) {
             Log.e(TAG, "BarcodeReaderException: " + e.getMessage());
             App.showErrorDialog(getContext(),
@@ -177,10 +183,9 @@ public class ValidateFragment extends Fragment {
         loadingImage.setCenterRadius(30f);
         loadingImage.start();
         // Load Image
-        GlideApp.with(this)
+        Glide.with(this)
                 .load(imagePath)
-                .placeholder(loadingImage)
-                .into(mDataBinding.imagePreview);
+                .into(mImagePreview);
     }
 
     private String getImagePath() {
