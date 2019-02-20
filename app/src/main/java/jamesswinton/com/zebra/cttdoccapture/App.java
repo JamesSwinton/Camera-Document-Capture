@@ -30,15 +30,10 @@ public class App extends Application {
     public static final int CAPTURE_IMAGE = 100;
 
     // Variables
-    @SuppressLint("StaticFieldLeak")
-    public static Context mContext;
 
     @Override
     public void onCreate() {
         super.onCreate();
-
-        // Init Context
-        mContext = this;
     }
 
     public static void showErrorDialog(Context cx, String message) {
