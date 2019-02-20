@@ -9,7 +9,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
+import static android.app.Activity.RESULT_CANCELED;
 import static android.app.Activity.RESULT_OK;
 import static jamesswinton.com.zebra.cttdoccapture.App.CAPTURE_IMAGE;
 import static jamesswinton.com.zebra.cttdoccapture.App.TEMP_IMAGE_PATH_ARG;
@@ -46,9 +48,9 @@ public class CaptureFragment extends Fragment {
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (resultCode == RESULT_OK) {
-            switch (requestCode) {
-                case CAPTURE_IMAGE:
+        switch (requestCode) {
+            case CAPTURE_IMAGE:
+                if (resultCode == RESULT_OK) {
                     if (data.getExtras() != null && data.getStringExtra("image-path") != null) {
                         // Get Temp Image Path
                         mTempImagePath = data.getStringExtra("image-path");
@@ -74,8 +76,11 @@ public class CaptureFragment extends Fragment {
                         App.showErrorDialog(getContext(),
                                 getString(R.string.error_message_no_image_path));
                     }
-                    break;
-            }
+                } else if (resultCode == RESULT_CANCELED) {
+                    Toast.makeText(getContext(), "Image Capture Cancelled", Toast.LENGTH_LONG)
+                            .show();
+                }
+                break;
         }
     }
 
