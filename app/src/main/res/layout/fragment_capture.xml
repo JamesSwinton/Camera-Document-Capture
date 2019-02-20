@@ -1,44 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".CaptureFragment">
+    tools:context=".CaptureFragment"
+    android:id="@+id/base_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:clickable="true"
+    android:focusable="true">
 
-    <FrameLayout
-        android:id="@+id/base_layout"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:clickable="true"
-        android:focusable="true">
+        android:orientation="vertical"
+        android:clickable="false"
+        android:weightSum="1"
+        tools:ignore="UselessParent">
 
-        <LinearLayout
+        <ImageView
+            android:id="@+id/capture_prompt_image_view"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:clickable="false"
-            android:weightSum="1"
-            tools:ignore="UselessParent">
+            android:layout_height="0dp"
+            android:layout_weight="0.75"
+            android:padding="50dp"
+            android:src="@drawable/ic_scan_document"
+            android:contentDescription="@string/scan_new_document_icon" />
 
-            <ImageView
-                android:id="@+id/capture_prompt_image_view"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="0.75"
-                android:padding="50dp"
-                android:src="@drawable/ic_scan_document"
-                android:contentDescription="@string/scan_new_document_icon" />
+        <TextView
+            android:id="@+id/capture_prompt_text_view"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:gravity="center"
+            android:textSize="12pt"
+            android:layout_weight="0.25"
+            android:text="@string/tap_to_scan_new_document"/>
 
-            <TextView
-                android:id="@+id/capture_prompt_text_view"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:gravity="center"
-                android:textSize="12pt"
-                android:layout_weight="0.25"
-                android:text="@string/tap_to_scan_new_document"/>
+    </LinearLayout>
 
-        </LinearLayout>
-
-    </FrameLayout>
-
-</layout>
+</FrameLayout>
