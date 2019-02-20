@@ -156,7 +156,7 @@ public class ValidateFragment extends Fragment {
             }
             // Init Spinner Adapter
             ArrayAdapter<String> adapter = new ArrayAdapter<>(
-                    getContext() == null ? App.mContext : getContext(),
+                    getContext(),
                     android.R.layout.simple_spinner_item, mDecodedBarcodes);
             adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
             // Set Adapter on Spinner
@@ -175,10 +175,8 @@ public class ValidateFragment extends Fragment {
     }
 
     private void loadImage(String imagePath) {
-        // Get Non-null Context
-        Context cx = (getContext() == null ? App.mContext : getContext());
         // Create Circular Progress Drawable
-        CircularProgressDrawable loadingImage = new CircularProgressDrawable(cx);
+        CircularProgressDrawable loadingImage = new CircularProgressDrawable(getContext());
         loadingImage.setStrokeWidth(5f);
         loadingImage.setCenterRadius(30f);
         loadingImage.start();
