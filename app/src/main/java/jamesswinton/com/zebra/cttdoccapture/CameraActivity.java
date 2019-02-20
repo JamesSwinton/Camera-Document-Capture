@@ -9,8 +9,12 @@ import com.dynamsoft.camerasdk.exception.DcsCameraNotAuthorizedException;
 import com.dynamsoft.camerasdk.exception.DcsException;
 import com.dynamsoft.camerasdk.exception.DcsValueNotValidException;
 import com.dynamsoft.camerasdk.io.DcsJPEGEncodeParameter;
+import com.dynamsoft.camerasdk.model.DcsDocument;
+import com.dynamsoft.camerasdk.model.DcsImage;
 import com.dynamsoft.camerasdk.view.DcsDocumentEditorView;
 import com.dynamsoft.camerasdk.view.DcsDocumentEditorViewListener;
+import com.dynamsoft.camerasdk.view.DcsVideoView;
+import com.dynamsoft.camerasdk.view.DcsVideoViewListener;
 import com.dynamsoft.camerasdk.view.DcsView;
 
 import java.io.File;
@@ -48,6 +52,9 @@ public class CameraActivity extends AppCompatActivity {
 
         // Initialise DCS View
         initDcsView();
+
+        // Listen on Capture (for cancel)
+        initCaptureListener();
 
         // Listen on Editor
         initEditorListener();
@@ -97,6 +104,41 @@ public class CameraActivity extends AppCompatActivity {
         mDcsView.setCurrentView(DcsView.DVE_VIDEOVIEW);
         // Allow Editing Post - Capture
         mDcsView.getVideoView().setNextViewAfterCapture(DcsView.DVE_EDITORVIEW);
+    }
+
+    private void initCaptureListener() {
+        mDcsView.getVideoView().setListener(new DcsVideoViewListener() {
+            @Override
+            public boolean onPreCapture(DcsVideoView dcsVideoView) {
+                return false;
+            }
+
+            @Override
+            public void onCaptureFailure(DcsVideoView dcsVideoView, DcsException e) {
+
+            }
+
+            @Override
+            public void onPostCapture(DcsVideoView dcsVideoView, DcsImage dcsImage) {
+
+            }
+
+            @Override
+            public void onCancelTapped(DcsVideoView dcsVideoView) {
+                setResult(RESULT_CANCELED);
+                finish();
+            }
+
+            @Override
+            public void onCaptureTapped(DcsVideoView dcsVideoView) {
+
+            }
+
+            @Override
+            public void onDocumentDetected(DcsVideoView dcsVideoView, DcsDocument dcsDocument) {
+
+            }
+        });
     }
 
     private void initEditorListener() {
