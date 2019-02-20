@@ -1,28 +1,17 @@
 package jamesswinton.com.zebra.cttdoccapture;
 
 import android.content.Intent;
-import android.databinding.DataBindingUtil;
-import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.FileProvider;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.Objects;
-
-import jamesswinton.com.zebra.cttdoccapture.databinding.FragmentCaptureBinding;
+import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 
 import static android.app.Activity.RESULT_OK;
 import static jamesswinton.com.zebra.cttdoccapture.App.CAPTURE_IMAGE;
-import static jamesswinton.com.zebra.cttdoccapture.App.FILE_PROVIDER;
-import static jamesswinton.com.zebra.cttdoccapture.App.TEMP_IMAGE_DIRECTORY_FILE_PATH;
 import static jamesswinton.com.zebra.cttdoccapture.App.TEMP_IMAGE_PATH_ARG;
 
 public class CaptureFragment extends Fragment {
@@ -35,7 +24,7 @@ public class CaptureFragment extends Fragment {
 
     // Variables
     private String mTempImagePath = null;
-    private FragmentCaptureBinding mDataBinding = null;
+    private FrameLayout mBaseLayout = null;
 
     // Required empty public constructor
     public CaptureFragment() {}
@@ -45,13 +34,11 @@ public class CaptureFragment extends Fragment {
         // Create View
         View fragmentView = inflater.inflate(R.layout.fragment_capture, container, false);
 
-        // Init DataBinding
-        mDataBinding = DataBindingUtil.bind(fragmentView);
+        // Get Base Layout
+        mBaseLayout = fragmentView.findViewById(R.id.base_layout);
 
         // Init CaptureImage FAB Listener
-        if (mDataBinding != null) {
-            mDataBinding.baseLayout.setOnClickListener(view -> captureNewImage());
-        }
+        mBaseLayout.setOnClickListener(view -> captureNewImage());
 
         // Return View
         return fragmentView;

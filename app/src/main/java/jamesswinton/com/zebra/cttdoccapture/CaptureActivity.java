@@ -2,7 +2,6 @@ package jamesswinton.com.zebra.cttdoccapture;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
-import android.databinding.DataBindingUtil;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
@@ -11,8 +10,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
 import java.io.File;
-
-import jamesswinton.com.zebra.cttdoccapture.databinding.ActivityCaptureBinding;
 
 import static jamesswinton.com.zebra.cttdoccapture.App.BASE_DIRECTORY_FILE_PATH;
 import static jamesswinton.com.zebra.cttdoccapture.App.PERM_IMAGE_DIRECTORY_FILE_PATH;
@@ -27,20 +24,17 @@ public class CaptureActivity extends AppCompatActivity {
     private static final int PERMISSIONS_WRITE_EXTERNAL_STORAGE = 100;
 
     // Variables
-    private ActivityCaptureBinding mDataBinding = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_capture);
 
         // Request Permissions
         getPermission();
 
-        // Init DataBinding
-        mDataBinding = DataBindingUtil.setContentView(this, R.layout.activity_capture);
-
         // Init Toolbar
-        setSupportActionBar(mDataBinding.toolbar);
+        setSupportActionBar(findViewById(R.id.toolbar));
         if (getSupportActionBar() != null) {
             getSupportActionBar().setTitle("CTT Document Capture");
             getSupportActionBar().setSubtitle("Capture, process & store documents");
