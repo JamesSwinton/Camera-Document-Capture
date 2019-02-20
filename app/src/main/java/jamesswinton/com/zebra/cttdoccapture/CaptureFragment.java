@@ -49,8 +49,9 @@ public class CaptureFragment extends Fragment {
         if (resultCode == RESULT_OK) {
             switch (requestCode) {
                 case CAPTURE_IMAGE:
-                    // Check we have a valid Image Path
-                    if (mTempImagePath != null) {
+                    if (data.getExtras() != null && data.getStringExtra("image-path") != null) {
+                        // Get Temp Image Path
+                        mTempImagePath = data.getStringExtra("image-path");
                         // Create ValidateFragment
                         ValidateFragment validateFragment = new ValidateFragment();
                         // Build Argument Bundle
@@ -80,46 +81,14 @@ public class CaptureFragment extends Fragment {
 
     private void captureNewImage() {
         // Create Camera Intent
-        Intent captureNewImage = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        Intent captureNewImage = new Intent(getActivity(), CameraActivity.class);
         // Make sure we're attached to an Activity
         if (hasParentActivity(captureNewImage)) {
-            // Create Temporary Image File
-            File temporaryImageFile = createTempImageFile();
-            // Check File created successfully
-            if (temporaryImageFile != null) {
-                // Store Temporary Image Path
-                mTempImagePath = temporaryImageFile.getAbsolutePath();
-                // Get URI from File
-                Uri photoURI = FileProvider.getUriForFile(Objects.requireNonNull(getActivity()),
-                        FILE_PROVIDER, temporaryImageFile);
-                // Add URI to Intent
-                captureNewImage.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
-                // Fire Intent
-                startActivityForResult(captureNewImage, CAPTURE_IMAGE);
-            } else {
-                // Show Error
-                App.showErrorDialog(getContext(),
-                        getString(R.string.error_message_failed_create_temp_image));
-            }
+            startActivityForResult(captureNewImage, CAPTURE_IMAGE);
         }
     }
 
     private boolean hasParentActivity(Intent intent) {
         return getActivity() != null && intent.resolveActivity(getActivity().getPackageManager()) != null;
     }
-
-    private File createTempImageFile() {
-        // Create Temporary File Name
-        String temporaryImageFileName = getString(R.string.temporary_image_file_name,
-                String.valueOf(System.currentTimeMillis()));
-        try {
-            // Return New Temporary File
-            return File.createTempFile(temporaryImageFileName, ".jpg",
-                    new File(TEMP_IMAGE_DIRECTORY_FILE_PATH));
-        } catch (IOException e) {
-            Log.e(TAG, "IOException: " + e.getMessage());
-            return null;
-        }
-    }
-
 }
