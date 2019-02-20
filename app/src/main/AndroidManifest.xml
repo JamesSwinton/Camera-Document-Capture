@@ -17,7 +17,8 @@
         android:theme="@style/AppTheme"
         android:supportsRtl="true"
         android:roundIcon="@mipmap/ic_launcher_round"
-        tools:ignore="AllowBackup,GoogleAppIndexingWarning">
+        tools:ignore="AllowBackup,GoogleAppIndexingWarning"
+        tools:node="replace">
 
         <!-- START FILE PROVIDER -->
         <provider
