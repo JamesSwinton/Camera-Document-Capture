@@ -184,10 +184,30 @@ public class CameraActivity extends AppCompatActivity {
             public void onOkTapped(DcsDocumentEditorView dcsDocumentEditorView, DcsException ex) {
                 try {
                     // Save File
-                    mDcsView.getIO().save(
-                            new int[]{ mDcsView.getBuffer().getCurrentIndex() },
+                    mDcsView.getIO().saveAsync(
+                            new int[]{mDcsView.getBuffer().getCurrentIndex()},
                             createTempImageFile(),
-                            new DcsJPEGEncodeParameter()
+                            new DcsJPEGEncodeParameter(),
+                            new ISave() {
+                                @Override
+                                public boolean onSaveProgress(int i) {
+                                    mSaveProgressDialog.show();
+                                    return true;
+                                }
+
+                                @Override
+                                public void onSaveSuccess(Object o) {
+                                    // Finish Activity -> Return Path
+                                    returnDataIntent.putExtra("image-path", mTempImagePath);
+                                    setResult(RESULT_OK, returnDataIntent);
+                                    finish();
+                                }
+
+                                @Override
+                                public void onSaveFailure(Object o, DcsException e) {
+
+                                }
+                            }
                     );
                 } catch (IOException e) {
                     // Log Exception
