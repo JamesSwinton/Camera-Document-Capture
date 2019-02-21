@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <!-- CAPTURE SETTINGS -->
-    <PreferenceCategory android:title="Capture">
+    <PreferenceCategory>
 
         <ListPreference
             android:key="torch_mode"
@@ -12,20 +12,22 @@
             android:dialogTitle="Torch Mode"
             android:entries="@array/torch_modes"
             android:entryValues="@array/torch_modes_values"
-            android:defaultValue="0"/>
+            android:defaultValue="0"
+            app:iconSpaceReserved="false"/>
 
     </PreferenceCategory>
     <!-- END CAPTURE SETTINGS -->
 
     <!-- IMAGE PROCESSING SETTINGS -->
-    <PreferenceCategory android:title="Processing">
+    <PreferenceCategory>
 
         <SeekBarPreference
             android:key="contrast"
             android:title="Contrast"
             android:summary="Adjust contrast to be applied to the captured image"
             android:defaultValue="70"
-            android:max="100">
+            android:max="100"
+            app:iconSpaceReserved="false">
         </SeekBarPreference>
 
         <SeekBarPreference
@@ -33,7 +35,8 @@
             android:title="Brightness"
             android:summary="Adjust brightness to be applied to the captured image"
             android:defaultValue="30"
-            android:max="100">
+            android:max="100"
+            app:iconSpaceReserved="false">
         </SeekBarPreference>
 
         <ListPreference
@@ -42,7 +45,8 @@
             android:dialogTitle="Filter"
             android:entries="@array/filter"
             android:entryValues="@array/filter_values"
-            android:defaultValue="0"/>
+            android:defaultValue="0"
+            app:iconSpaceReserved="false"/>
 
     </PreferenceCategory>
     <!-- END IMAGE PROCESSING SETTINGS -->
