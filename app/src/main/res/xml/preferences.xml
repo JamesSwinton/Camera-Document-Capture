@@ -1,4 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+<android.support.v7.preference.PreferenceScreen
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
-</PreferenceScreen>
+    <!-- CAPTURE SETTINGS -->
+    <PreferenceCategory android:title="Capture">
+
+        <ListPreference
+            android:key="torch_mode"
+            android:title="Set Torch Mode"
+            android:dialogTitle="Torch Mode"
+            android:entries="@array/torch_modes"
+            android:entryValues="@array/torch_modes_values"
+            android:defaultValue="0"/>
+
+    </PreferenceCategory>
+    <!-- END CAPTURE SETTINGS -->
+
+    <!-- IMAGE PROCESSING SETTINGS -->
+    <PreferenceCategory android:title="Processing">
+
+        <SeekBarPreference
+            android:key="contrast"
+            android:title="Contrast"
+            android:summary="Adjust contrast to be applied to the captured image"
+            android:defaultValue="70"
+            android:max="100">
+        </SeekBarPreference>
+
+        <SeekBarPreference
+            android:key="brightness"
+            android:title="Brightness"
+            android:summary="Adjust brightness to be applied to the captured image"
+            android:defaultValue="30"
+            android:max="100">
+        </SeekBarPreference>
+
+        <ListPreference
+            android:key="filter"
+            android:title="Set Filter"
+            android:dialogTitle="Filter"
+            android:entries="@array/filter"
+            android:entryValues="@array/filter_values"
+            android:defaultValue="0"/>
+
+    </PreferenceCategory>
+    <!-- END IMAGE PROCESSING SETTINGS -->
+
+</android.support.v7.preference.PreferenceScreen>
