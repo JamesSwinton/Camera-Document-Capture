@@ -1,10 +1,10 @@
 package jamesswinton.com.zebra.cttdoccapture;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -25,7 +25,11 @@ public class CaptureActivity extends AppCompatActivity {
     private static final String TAG = "CaptureActivity";
 
     // Constants
-    private static final int PERMISSIONS_WRITE_EXTERNAL_STORAGE = 100;
+    private static final int PERMISSION_ALL = 100;
+    private static final String[] PERMISSIONS = {
+            android.Manifest.permission.WRITE_EXTERNAL_STORAGE,
+            android.Manifest.permission.CAMERA
+    };
 
     // Variables
 
@@ -95,19 +99,27 @@ public class CaptureActivity extends AppCompatActivity {
     }
 
     private void getPermission() {
-        if (ContextCompat.checkSelfPermission(this,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                    PERMISSIONS_WRITE_EXTERNAL_STORAGE);
+        if(!hasPermissions(this, PERMISSIONS)){
+            ActivityCompat.requestPermissions(this, PERMISSIONS, PERMISSION_ALL);
         }
+    }
+
+    public static boolean hasPermissions(Context context, String... permissions) {
+        if (context != null && permissions != null) {
+            for (String permission : permissions) {
+                if (ActivityCompat.checkSelfPermission(context, permission) != PackageManager.PERMISSION_GRANTED) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[],
                                            @NonNull int[] grantResults) {
         switch (requestCode) {
-            case PERMISSIONS_WRITE_EXTERNAL_STORAGE: {
+            case PERMISSION_ALL: {
                 if (grantResults.length > 0 && grantResults[0] != PackageManager.PERMISSION_GRANTED) {
                     getPermission();
                 } else {
