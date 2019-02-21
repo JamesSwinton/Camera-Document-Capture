@@ -30,4 +30,31 @@
     <string name="error_message_generic_exception">Exception: %1$s</string>
     <string name="error_message_cant_create_perm_image">Failed to create permanent image file. \n\nPlease try again.</string>
     <string name="error_message_cant_delete_temp_image">Failed to delete temporary image file. \n\nPlease try again.</string>
+
+    <!-- Settings Strings -->
+    <string-array name="torch_modes">
+        <item>Always-On</item>
+        <item>Always-Off</item>
+        <item>Auto</item>
+        <item>On During Capture</item>
+    </string-array>
+    <string-array name="torch_modes_values">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+    </string-array>
+
+    <string-array name="filter">
+        <item>None</item>
+        <item>Colour</item>
+        <item>Grey</item>
+        <item>Black and White</item>
+    </string-array>
+    <string-array name="filter_values">
+        <item>0</item>
+        <item>1</item>
+        <item>2</item>
+    </string-array>
+
 </resources>
