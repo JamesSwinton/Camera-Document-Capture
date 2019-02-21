@@ -1,9 +1,12 @@
 package jamesswinton.com.zebra.cttdoccapture;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.preference.ListPreference;
+import android.support.v7.preference.PreferenceManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
@@ -44,6 +47,7 @@ public class CameraActivity extends AppCompatActivity {
 
     private AlertDialog mSaveProgressDialog;
     private ProgressBar mSaveProgressBar;
+    private SharedPreferences mPreferenceManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,6 +62,9 @@ public class CameraActivity extends AppCompatActivity {
 
         // Init ReturnDataIntent
         returnDataIntent = new Intent();
+
+        // Init Preference Manager
+        mPreferenceManager = PreferenceManager.getDefaultSharedPreferences(this);
 
         //
         initSaveProgressDialog();
@@ -130,9 +137,26 @@ public class CameraActivity extends AppCompatActivity {
         mDcsView.getVideoView().setNextViewAfterCapture(DcsView.DVE_EDITORVIEW);
         // Allow Canceling without opening Gallery
         mDcsView.getVideoView().setNextViewAfterCancel(DcsView.DVE_VIDEOVIEW);
-//        mDcsView.getDocumentEditorView().adjustBrightness();
-//        mDcsView.getDocumentEditorView().adjustContrast();
-//        mDcsView.getDocumentEditorView().toBlackWhite();
+        // Set Flash Mode
+        setTorchMode();
+    }
+
+    private void setTorchMode() {
+        // Get String
+        int torchMode = Integer.parseInt(mPreferenceManager.getString("torch_mode", "0"));
+        // Always On
+        if (torchMode == 0) {
+            mDcsView.getVideoView().setFlashMode(DcsVideoView.DFME_TORCH);
+            // Always Off
+        } else if (torchMode == 1) {
+            mDcsView.getVideoView().setFlashMode(DcsVideoView.DFME_OFF);
+            // Auto
+        } else if (torchMode == 2) {
+            mDcsView.getVideoView().setFlashMode(DcsVideoView.DFME_AUTO);
+            // On At Capture
+        } else if (torchMode == 3) {
+            mDcsView.getVideoView().setFlashMode(DcsVideoView.DFME_ON);
+        }
     }
 
     private void initCaptureListener() {
@@ -197,6 +221,10 @@ public class CameraActivity extends AppCompatActivity {
 
                                 @Override
                                 public void onSaveSuccess(Object o) {
+                                    // Remove Dialog
+                                    if (mSaveProgressDialog.isShowing()) {
+                                        mSaveProgressDialog.dismiss();
+                                    }
                                     // Finish Activity -> Return Path
                                     returnDataIntent.putExtra("image-path", mTempImagePath);
                                     setResult(RESULT_OK, returnDataIntent);
@@ -223,10 +251,35 @@ public class CameraActivity extends AppCompatActivity {
     private void initViewChangeListener() {
         mDcsView.setListener((dcsView, i, i1) -> {
             if (i1 == DcsView.DVE_EDITORVIEW){
+                // Set View to prevent Gallery Showing
                 mDcsView.getDocumentEditorView().setNextViewAfterCancel(DcsView.DVE_EDITORVIEW);
                 mDcsView.getDocumentEditorView().setNextViewAfterOK(DcsView.DVE_EDITORVIEW);
+
+                // Set Prefs
+                mDcsView.getDocumentEditorView().adjustBrightness(
+                        mPreferenceManager.getInt("brightness", 30));
+                mDcsView.getDocumentEditorView().adjustContrast(
+                        mPreferenceManager.getInt("contrast", 70));
+
+                // Set Filter Mode
+                setFilterMode();
             }
         });
+    }
+
+    private void setFilterMode() {
+        // Get String
+        int filterMode = Integer.parseInt(mPreferenceManager.getString("filter", "0"));
+        // Colour
+        if (filterMode == 1) {
+            mDcsView.getDocumentEditorView().toColor();
+        // Grey
+        } else if (filterMode == 2) {
+            mDcsView.getDocumentEditorView().toGrey();
+        // B & W
+        } else if (filterMode == 3) {
+            mDcsView.getDocumentEditorView().toBlackWhite();
+        }
     }
 
     private String createTempImageFile() throws IOException {
