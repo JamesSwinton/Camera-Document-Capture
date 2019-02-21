@@ -2,13 +2,17 @@ package jamesswinton.com.zebra.cttdoccapture;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.View;
+import android.widget.ProgressBar;
 
 import com.dynamsoft.camerasdk.exception.DcsCameraNotAuthorizedException;
 import com.dynamsoft.camerasdk.exception.DcsException;
 import com.dynamsoft.camerasdk.exception.DcsValueNotValidException;
 import com.dynamsoft.camerasdk.io.DcsJPEGEncodeParameter;
+import com.dynamsoft.camerasdk.io.ISave;
 import com.dynamsoft.camerasdk.model.DcsDocument;
 import com.dynamsoft.camerasdk.model.DcsImage;
 import com.dynamsoft.camerasdk.view.DcsDocumentEditorView;
@@ -16,9 +20,11 @@ import com.dynamsoft.camerasdk.view.DcsDocumentEditorViewListener;
 import com.dynamsoft.camerasdk.view.DcsVideoView;
 import com.dynamsoft.camerasdk.view.DcsVideoViewListener;
 import com.dynamsoft.camerasdk.view.DcsView;
+import com.dynamsoft.camerasdk.view.DcsViewListener;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.zip.Inflater;
 
 import static jamesswinton.com.zebra.cttdoccapture.App.TEMP_IMAGE_DIRECTORY_FILE_PATH;
 
@@ -36,6 +42,9 @@ public class CameraActivity extends AppCompatActivity {
     private String mTempImagePath;
     private File mTempImagesDirectory;
 
+    private AlertDialog mSaveProgressDialog;
+    private ProgressBar mSaveProgressBar;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -50,11 +59,14 @@ public class CameraActivity extends AppCompatActivity {
         // Init ReturnDataIntent
         returnDataIntent = new Intent();
 
+        //
+        initSaveProgressDialog();
+
         // Initialise DCS View
         initDcsView();
 
-        // Listen on Capture (for cancel)
-        initCaptureListener();
+        //
+        initViewChangeListener();
 
         // Listen on Editor
         initEditorListener();
@@ -87,6 +99,16 @@ public class CameraActivity extends AppCompatActivity {
         mDcsView.getVideoView().destroyCamera();
     }
 
+    private void initSaveProgressDialog() {
+        if (mSaveProgressDialog == null) {
+            mSaveProgressDialog = new AlertDialog.Builder(this)
+                    .setTitle("Saving Image")
+                    .setView(R.layout.dialog_save_progress)
+                    .setCancelable(false)
+                    .create();
+        }
+    }
+
     private boolean initCameraSDK() {
         try {
             DcsView.setLicense(this, getString(R.string.dynamsoft_camera_license));
@@ -102,25 +124,33 @@ public class CameraActivity extends AppCompatActivity {
         mDcsView = findViewById(R.id.dcs_view);
         // Start VideoView
         mDcsView.setCurrentView(DcsView.DVE_VIDEOVIEW);
+        // Remove Cancel Button
+        mDcsView.getVideoView().setShowCancelToolItem(false);
         // Allow Editing Post - Capture
         mDcsView.getVideoView().setNextViewAfterCapture(DcsView.DVE_EDITORVIEW);
+        // Allow Canceling without opening Gallery
+        mDcsView.getVideoView().setNextViewAfterCancel(DcsView.DVE_VIDEOVIEW);
+//        mDcsView.getDocumentEditorView().adjustBrightness();
+//        mDcsView.getDocumentEditorView().adjustContrast();
+//        mDcsView.getDocumentEditorView().toBlackWhite();
     }
 
     private void initCaptureListener() {
         mDcsView.getVideoView().setListener(new DcsVideoViewListener() {
             @Override
             public boolean onPreCapture(DcsVideoView dcsVideoView) {
-                return false;
+                Log.i(TAG, "Preparing to capture image...");
+                return true;
             }
 
             @Override
             public void onCaptureFailure(DcsVideoView dcsVideoView, DcsException e) {
-
+                Log.i(TAG, "Error! Could not capture image");
             }
 
             @Override
             public void onPostCapture(DcsVideoView dcsVideoView, DcsImage dcsImage) {
-
+                Log.i(TAG, "Image Captured");
             }
 
             @Override
@@ -131,7 +161,7 @@ public class CameraActivity extends AppCompatActivity {
 
             @Override
             public void onCaptureTapped(DcsVideoView dcsVideoView) {
-
+                Log.i(TAG, "Capture Image Button Tapped...");
             }
 
             @Override
@@ -159,10 +189,6 @@ public class CameraActivity extends AppCompatActivity {
                             createTempImageFile(),
                             new DcsJPEGEncodeParameter()
                     );
-                    // Finish Activity -> Return Path
-                    returnDataIntent.putExtra("image-path", mTempImagePath);
-                    setResult(RESULT_OK, returnDataIntent);
-                    finish();
                 } catch (IOException e) {
                     // Log Exception
                     Log.e(TAG, "IOException: " + e.getMessage());
@@ -170,6 +196,15 @@ public class CameraActivity extends AppCompatActivity {
                     setResult(RESULT_CANCELED);
                     finish();
                 }
+            }
+        });
+    }
+
+    private void initViewChangeListener() {
+        mDcsView.setListener((dcsView, i, i1) -> {
+            if (i1 == DcsView.DVE_EDITORVIEW){
+                mDcsView.getDocumentEditorView().setNextViewAfterCancel(DcsView.DVE_EDITORVIEW);
+                mDcsView.getDocumentEditorView().setNextViewAfterOK(DcsView.DVE_EDITORVIEW);
             }
         });
     }
