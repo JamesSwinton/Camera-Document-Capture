@@ -54,6 +54,9 @@ public class CameraActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_camera);
 
+        // Init Preference Manager
+        mPreferenceManager = PreferenceManager.getDefaultSharedPreferences(this);
+
         // Init Dynamsoft SDK (Close Activity if failure)
         if (!initCameraSDK()) {
             setResult(RESULT_CANCELED);
@@ -62,9 +65,6 @@ public class CameraActivity extends AppCompatActivity {
 
         // Init ReturnDataIntent
         returnDataIntent = new Intent();
-
-        // Init Preference Manager
-        mPreferenceManager = PreferenceManager.getDefaultSharedPreferences(this);
 
         //
         initSaveProgressDialog();
@@ -118,7 +118,8 @@ public class CameraActivity extends AppCompatActivity {
 
     private boolean initCameraSDK() {
         try {
-            DcsView.setLicense(this, getString(R.string.dynamsoft_camera_license));
+            DcsView.setLicense(this, mPreferenceManager.getString("camera_license",
+                    getString(R.string.dynamsoft_camera_license)));
             return true;
         } catch (DcsValueNotValidException e) {
             Log.e(TAG, "InvalidDynamsoftLicenseException: " + e.getMessage());
@@ -157,42 +158,6 @@ public class CameraActivity extends AppCompatActivity {
         } else if (torchMode == 3) {
             mDcsView.getVideoView().setFlashMode(DcsVideoView.DFME_ON);
         }
-    }
-
-    private void initCaptureListener() {
-        mDcsView.getVideoView().setListener(new DcsVideoViewListener() {
-            @Override
-            public boolean onPreCapture(DcsVideoView dcsVideoView) {
-                Log.i(TAG, "Preparing to capture image...");
-                return true;
-            }
-
-            @Override
-            public void onCaptureFailure(DcsVideoView dcsVideoView, DcsException e) {
-                Log.i(TAG, "Error! Could not capture image");
-            }
-
-            @Override
-            public void onPostCapture(DcsVideoView dcsVideoView, DcsImage dcsImage) {
-                Log.i(TAG, "Image Captured");
-            }
-
-            @Override
-            public void onCancelTapped(DcsVideoView dcsVideoView) {
-                setResult(RESULT_CANCELED);
-                finish();
-            }
-
-            @Override
-            public void onCaptureTapped(DcsVideoView dcsVideoView) {
-                Log.i(TAG, "Capture Image Button Tapped...");
-            }
-
-            @Override
-            public void onDocumentDetected(DcsVideoView dcsVideoView, DcsDocument dcsDocument) {
-
-            }
-        });
     }
 
     private void initEditorListener() {
