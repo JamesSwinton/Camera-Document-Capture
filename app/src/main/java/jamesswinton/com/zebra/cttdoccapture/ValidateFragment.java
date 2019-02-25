@@ -1,11 +1,13 @@
 package jamesswinton.com.zebra.cttdoccapture;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.CircularProgressDrawable;
+import android.support.v7.preference.PreferenceManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -42,6 +44,7 @@ public class ValidateFragment extends Fragment {
 
     private static String mSelectedBarcode = null;
     private static BarcodeReader mBarcodeReader = null;
+    private static SharedPreferences mPreferenceManager = null;
     private static List<String> mDecodedBarcodes = new ArrayList<>();
 
     public ValidateFragment() {
@@ -69,6 +72,8 @@ public class ValidateFragment extends Fragment {
     public void onStart() {
         super.onStart();
         if (getImagePath() != null) {
+            // Get Preference Manager
+            mPreferenceManager = PreferenceManager.getDefaultSharedPreferences(getContext());
             // Load Image
             loadImage(getImagePath());
             // Attempt Decode
@@ -132,7 +137,9 @@ public class ValidateFragment extends Fragment {
             mDecodedBarcodes = new ArrayList<>();
             // Init Barcode Reader
             if (mBarcodeReader == null) {
-                mBarcodeReader = new BarcodeReader(getString(R.string.dynamsoft_scanner_license));
+                mBarcodeReader = new BarcodeReader(
+                        mPreferenceManager.getString("barcode_reader_license",
+                        getString(R.string.dynamsoft_scanner_license)));
             }
             // Attempt Decode
             TextResult[] decodeResults = mBarcodeReader.decodeFile(getImagePath(), "");
