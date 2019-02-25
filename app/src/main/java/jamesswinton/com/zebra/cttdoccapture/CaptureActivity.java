@@ -44,7 +44,7 @@ public class CaptureActivity extends AppCompatActivity {
         // Init Toolbar
         setSupportActionBar(findViewById(R.id.toolbar));
         if (getSupportActionBar() != null) {
-            getSupportActionBar().setTitle("CTT Document Capture");
+            getSupportActionBar().setTitle("Camera Document Capture");
             getSupportActionBar().setSubtitle("Capture, process & store documents");
         }
 
