@@ -91,10 +91,14 @@ public class ValidateFragment extends Fragment {
         File tempImage = new File(getImagePath());
         // Check File Exists
         if (tempImage.exists()) {
+            // Get File Name (Barcode if selected, otherwise current time)
+            String fileName = mBarcodeSpinner.getSelectedItemPosition() > 0 ?
+                    mBarcodeSpinner.getSelectedItem().toString() :
+                    String.valueOf(System.currentTimeMillis());
             // Create New File
             File permImage = new File(PERM_IMAGE_DIRECTORY_FILE_PATH
                     + File.separator
-                    + mBarcodeSpinner.getSelectedItem().toString()
+                    + fileName
                     + ".jpg");
             // Rename tempImage to permImage
             if (tempImage.renameTo(permImage)) {
@@ -149,13 +153,9 @@ public class ValidateFragment extends Fragment {
                 for (TextResult barcode : decodeResults) {
                     mDecodedBarcodes.add(barcode.barcodeText);
                 }
-                // Enable Save Button
-                mSaveButton.setEnabled(true);
             } else {
                 // Show Error
                 App.showErrorDialog(getContext(), getString(R.string.error_message_no_image_decode));
-                // Disable Save
-                mSaveButton.setEnabled(false);
                 // Set Selected Barcode to Generic String
                 mSelectedBarcode = getString(R.string.error_message_no_image_decode);
                 // Add Generic string to List
