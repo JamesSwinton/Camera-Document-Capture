@@ -171,6 +171,8 @@ public class CameraActivity extends AppCompatActivity {
 
             @Override
             public void onOkTapped(DcsDocumentEditorView dcsDocumentEditorView, DcsException ex) {
+                // Show Save Dialog
+                mSaveProgressDialog.show();
                 try {
                     // Save File
                     mDcsView.getIO().saveAsync(
@@ -180,7 +182,6 @@ public class CameraActivity extends AppCompatActivity {
                             new ISave() {
                                 @Override
                                 public boolean onSaveProgress(int i) {
-                                    mSaveProgressDialog.show();
                                     return true;
                                 }
 
@@ -198,13 +199,20 @@ public class CameraActivity extends AppCompatActivity {
 
                                 @Override
                                 public void onSaveFailure(Object o, DcsException e) {
-
+                                    // Remove Dialog
+                                    if (mSaveProgressDialog.isShowing()) {
+                                        mSaveProgressDialog.dismiss();
+                                    }
                                 }
                             }
                     );
                 } catch (IOException e) {
                     // Log Exception
                     Log.e(TAG, "IOException: " + e.getMessage());
+                    // Remove Dialog
+                    if (mSaveProgressDialog.isShowing()) {
+                        mSaveProgressDialog.dismiss();
+                    }
                     // Return Cancelled Result
                     setResult(RESULT_CANCELED);
                     finish();
