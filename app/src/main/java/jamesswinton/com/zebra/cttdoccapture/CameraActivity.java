@@ -5,10 +5,8 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.preference.ListPreference;
 import android.support.v7.preference.PreferenceManager;
 import android.util.Log;
-import android.view.View;
 import android.widget.ProgressBar;
 
 import com.dynamsoft.camerasdk.exception.DcsCameraNotAuthorizedException;
@@ -16,18 +14,13 @@ import com.dynamsoft.camerasdk.exception.DcsException;
 import com.dynamsoft.camerasdk.exception.DcsValueNotValidException;
 import com.dynamsoft.camerasdk.io.DcsJPEGEncodeParameter;
 import com.dynamsoft.camerasdk.io.ISave;
-import com.dynamsoft.camerasdk.model.DcsDocument;
-import com.dynamsoft.camerasdk.model.DcsImage;
 import com.dynamsoft.camerasdk.view.DcsDocumentEditorView;
 import com.dynamsoft.camerasdk.view.DcsDocumentEditorViewListener;
 import com.dynamsoft.camerasdk.view.DcsVideoView;
-import com.dynamsoft.camerasdk.view.DcsVideoViewListener;
 import com.dynamsoft.camerasdk.view.DcsView;
-import com.dynamsoft.camerasdk.view.DcsViewListener;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.zip.Inflater;
 
 import static jamesswinton.com.zebra.cttdoccapture.App.TEMP_IMAGE_DIRECTORY_FILE_PATH;
 
@@ -110,7 +103,7 @@ public class CameraActivity extends AppCompatActivity {
         if (mSaveProgressDialog == null) {
             mSaveProgressDialog = new AlertDialog.Builder(this)
                     .setTitle("Saving Image")
-                    .setView(R.layout.dialog_save_progress)
+                    .setView(R.layout.dialog_progress)
                     .setCancelable(false)
                     .create();
         }
