@@ -14,7 +14,7 @@ public class App extends Application {
     private static final String TAG = "ApplicationClass";
 
     // Constants
-    private static final String BASE_DIRECTORY_NAME = "CTT Document Capture";
+    private static final String BASE_DIRECTORY_NAME = "Camera Document Capture";
     private static final String TEMP_IMAGE_DIRECTORY_NAME = "Temporary Images";
     private static final String PERM_IMAGE_DIRECTORY_NAME = "Processed Images";
     public static final String BASE_DIRECTORY_FILE_PATH = Environment
