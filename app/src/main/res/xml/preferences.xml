@@ -51,4 +51,26 @@
     </PreferenceCategory>
     <!-- END IMAGE PROCESSING SETTINGS -->
 
+    <!-- CONFIGURATION SETTINGS -->
+    <PreferenceCategory>
+
+        <EditTextPreference
+            android:key="camera_license"
+            android:title="Camera SDK License"
+            android:summary="License String for Camera SDK (available at dynamsoft.com)"
+            android:defaultValue="D32C3AB999DD96F5D49270211A21906D192E7B0B"
+            app:iconSpaceReserved="false">
+        </EditTextPreference>
+
+        <EditTextPreference
+            android:key="barcode_reader_license"
+            android:title="Barcode Reader SDK License"
+            android:summary="License String for Barcode Reader SDK (available at dynamsoft.com)"
+            android:defaultValue="t0068NQAAALIoxwoEDRb4qLOgAs+vmoa0Z6skV14Usxqg0IvjWKKv8f6Dm0QbPpk4BSErjMf0SIndAnWlUHDnT3uDYtP5/ko="
+            app:iconSpaceReserved="false">
+        </EditTextPreference>
+
+    </PreferenceCategory>
+    <!-- END CONFIGURATION SETTINGS -->
+
 </android.support.v7.preference.PreferenceScreen>
