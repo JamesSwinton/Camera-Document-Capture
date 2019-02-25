@@ -1,12 +1,12 @@
 package jamesswinton.com.zebra.cttdoccapture;
 
-import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
-import android.support.v4.widget.CircularProgressDrawable;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.preference.PreferenceManager;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -40,8 +40,10 @@ public class ValidateFragment extends Fragment {
     // Variables
     private ImageView mImagePreview;
     private Spinner mBarcodeSpinner;
+    private AlertDialog mDecodeProgressDialog;
     private FloatingActionButton mSaveButton, mDeleteButton;
 
+    private static Exception mException = null;
     private static String mSelectedBarcode = null;
     private static boolean mBarcodeDecoded = false;
     private static BarcodeReader mBarcodeReader = null;
@@ -82,7 +84,7 @@ public class ValidateFragment extends Fragment {
             // Load Image
             loadImage(getImagePath());
             // Attempt Decode
-            processImage();
+            new DecodeBarcodeAsync().execute();
         } else {
             App.showErrorDialog(getContext(), getString(R.string.error_message_no_image_path));
         }
@@ -137,66 +139,107 @@ public class ValidateFragment extends Fragment {
         }
     }
 
-    private void processImage() {
-        try {
-            // Clear Existing Barcodes
-            mDecodedBarcodes = new ArrayList<>();
-            // Init Barcode Reader
-            if (mBarcodeReader == null) {
-                mBarcodeReader = new BarcodeReader(
-                        mPreferenceManager.getString("barcode_reader_license",
-                        getString(R.string.dynamsoft_scanner_license)));
-            }
-            // Attempt Decode
-            TextResult[] decodeResults = mBarcodeReader.decodeFile(getImagePath(), "");
-            // Loop results
-            if (decodeResults != null && decodeResults.length > 0) {
-                // Update Holder Variable
-                mBarcodeDecoded = true;
-                // Add Results to Array
-                for (TextResult barcode : decodeResults) {
-                    mDecodedBarcodes.add(barcode.barcodeText);
-                }
-            } else {
-                // Update Holder Variable
-                mBarcodeDecoded = false;
-                // Show Error
-                App.showErrorDialog(getContext(), getString(R.string.error_message_no_image_decode));
-                // Set Selected Barcode to Generic String
-                mSelectedBarcode = getString(R.string.error_message_no_image_decode);
-                // Add Generic string to List
-                mDecodedBarcodes.add(mSelectedBarcode);
-            }
-            // Init Spinner Adapter
-            ArrayAdapter<String> adapter = new ArrayAdapter<>(
-                    getContext(),
-                    android.R.layout.simple_spinner_item, mDecodedBarcodes);
-            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-            // Set Adapter on Spinner
-            mBarcodeSpinner.setAdapter(adapter);
-        } catch (BarcodeReaderException e) {
-            Log.e(TAG, "BarcodeReaderException: " + e.getMessage());
-            App.showErrorDialog(getContext(),
-                    getString(R.string.error_message_barcode_reader_exception,
-                            e.getMessage()));
-        } catch (Exception e) {
-            Log.e(TAG, "Exception: " + e.getMessage());
-            App.showErrorDialog(getContext(),
-                    getString(R.string.error_message_generic_exception,
-                            e.getMessage()));
-        }
-    }
-
     private void loadImage(String imagePath) {
         // Load Image
         Glide.with(this)
                 .load(imagePath)
-                .placeholder(R.drawable.ic_decoding_placeholder)
                 .into(mImagePreview);
     }
 
     private String getImagePath() {
         return getArguments() == null ? null : getArguments().getString(TEMP_IMAGE_PATH_ARG);
+    }
+
+    private class DecodeBarcodeAsync extends AsyncTask<Void, Integer, Boolean> {
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+
+            // Display Indeterminate dialog
+            if (mDecodeProgressDialog == null) {
+                mDecodeProgressDialog = new AlertDialog.Builder(getContext())
+                        .setTitle("Decoding Image")
+                        .setView(R.layout.dialog_progress)
+                        .setCancelable(false)
+                        .create();
+            }
+
+            // Display Dialog
+            mDecodeProgressDialog.show();
+        }
+
+        @Override
+        protected Boolean doInBackground(Void... params) {
+            try {
+                // Clear Existing Barcodes
+                mDecodedBarcodes = new ArrayList<>();
+                // Init Barcode Reader
+                if (mBarcodeReader == null) {
+                    mBarcodeReader = new BarcodeReader(
+                            mPreferenceManager.getString("barcode_reader_license",
+                                    getString(R.string.dynamsoft_scanner_license)));
+                }
+                // Attempt Decode
+                TextResult[] decodeResults = mBarcodeReader.decodeFile(getImagePath(), "");
+                // Loop results
+                if (decodeResults != null && decodeResults.length > 0) {
+                    // Add Results to Array
+                    for (TextResult barcode : decodeResults) {
+                        mDecodedBarcodes.add(barcode.barcodeText);
+                    }
+                    // Notify onPostExecute
+                    return true;
+                } else {
+                    // Set Selected Barcode to Generic String
+                    mSelectedBarcode = getString(R.string.error_message_no_image_decode);
+                    // Add Generic string to List
+                    mDecodedBarcodes.add(mSelectedBarcode);
+                    // Notify onPostExecute
+                    return false;
+                }
+
+            } catch (Exception e) {
+                // Log Error
+                Log.e(TAG, "BarcodeReaderException: " + e.getMessage());
+                // Save Exception
+                mException = e;
+                // Return Null
+                return null;
+            }
+        }
+
+        @Override
+        protected void onPostExecute(Boolean decodeSuccessful) {
+            super.onPostExecute(decodeSuccessful);
+
+            // Dismiss Dialog
+            mDecodeProgressDialog.dismiss();
+
+            // Handle Exception
+            if (decodeSuccessful == null) {
+                App.showErrorDialog(getContext(),
+                        getString(R.string.error_message_barcode_reader_exception,
+                                mException.getMessage()));
+                return;
+            }
+
+            // Update Holder Variable
+            mBarcodeDecoded = decodeSuccessful;
+
+            // Init Spinner Adapter
+            ArrayAdapter<String> adapter = new ArrayAdapter<>(
+                    getContext(),
+                    android.R.layout.simple_spinner_item, mDecodedBarcodes);
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            mBarcodeSpinner.setAdapter(adapter);
+
+            // Handle Unsuccessful Decode
+            if (!decodeSuccessful) {
+                // Show Error
+                App.showErrorDialog(getContext(), getString(R.string.error_message_no_image_decode));
+            }
+        }
     }
 
 }
