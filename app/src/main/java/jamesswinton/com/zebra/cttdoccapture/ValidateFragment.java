@@ -43,6 +43,7 @@ public class ValidateFragment extends Fragment {
     private FloatingActionButton mSaveButton, mDeleteButton;
 
     private static String mSelectedBarcode = null;
+    private static boolean mBarcodeDecoded = false;
     private static BarcodeReader mBarcodeReader = null;
     private static SharedPreferences mPreferenceManager = null;
     private static List<String> mDecodedBarcodes = new ArrayList<>();
@@ -64,6 +65,10 @@ public class ValidateFragment extends Fragment {
         mImagePreview = fragmentView.findViewById(R.id.image_preview);
         mBarcodeSpinner = fragmentView.findViewById(R.id.barcode_spinner);
 
+        // Set Click Listeners
+        mSaveButton.setOnClickListener(view -> saveImage());
+        mDeleteButton.setOnClickListener(view -> deleteImage());
+
         // Return View
         return fragmentView;
     }
@@ -78,9 +83,6 @@ public class ValidateFragment extends Fragment {
             loadImage(getImagePath());
             // Attempt Decode
             processImage();
-            // Set Click Listeners
-            mSaveButton.setOnClickListener(view -> saveImage());
-            mDeleteButton.setOnClickListener(view -> deleteImage());
         } else {
             App.showErrorDialog(getContext(), getString(R.string.error_message_no_image_path));
         }
@@ -92,7 +94,7 @@ public class ValidateFragment extends Fragment {
         // Check File Exists
         if (tempImage.exists()) {
             // Get File Name (Barcode if selected, otherwise current time)
-            String fileName = mBarcodeSpinner.getSelectedItemPosition() > 0 ?
+            String fileName = mBarcodeDecoded ?
                     mBarcodeSpinner.getSelectedItem().toString() :
                     String.valueOf(System.currentTimeMillis());
             // Create New File
@@ -149,11 +151,15 @@ public class ValidateFragment extends Fragment {
             TextResult[] decodeResults = mBarcodeReader.decodeFile(getImagePath(), "");
             // Loop results
             if (decodeResults != null && decodeResults.length > 0) {
+                // Update Holder Variable
+                mBarcodeDecoded = true;
                 // Add Results to Array
                 for (TextResult barcode : decodeResults) {
                     mDecodedBarcodes.add(barcode.barcodeText);
                 }
             } else {
+                // Update Holder Variable
+                mBarcodeDecoded = false;
                 // Show Error
                 App.showErrorDialog(getContext(), getString(R.string.error_message_no_image_decode));
                 // Set Selected Barcode to Generic String
@@ -182,14 +188,10 @@ public class ValidateFragment extends Fragment {
     }
 
     private void loadImage(String imagePath) {
-        // Create Circular Progress Drawable
-        CircularProgressDrawable loadingImage = new CircularProgressDrawable(getContext());
-        loadingImage.setStrokeWidth(5f);
-        loadingImage.setCenterRadius(30f);
-        loadingImage.start();
         // Load Image
         Glide.with(this)
                 .load(imagePath)
+                .placeholder(R.drawable.ic_decoding_placeholder)
                 .into(mImagePreview);
     }
 
