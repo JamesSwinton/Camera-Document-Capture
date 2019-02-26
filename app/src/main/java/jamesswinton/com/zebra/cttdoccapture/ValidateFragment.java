@@ -233,12 +233,6 @@ public class ValidateFragment extends Fragment {
                     android.R.layout.simple_spinner_item, mDecodedBarcodes);
             adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
             mBarcodeSpinner.setAdapter(adapter);
-
-            // Handle Unsuccessful Decode
-            if (!decodeSuccessful) {
-                // Show Error
-                App.showErrorDialog(getContext(), getString(R.string.error_message_no_image_decode));
-            }
         }
     }
 
