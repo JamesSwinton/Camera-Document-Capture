@@ -15,6 +15,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
@@ -38,6 +39,7 @@ public class ValidateFragment extends Fragment {
 
 
     // Variables
+    private TextView mSpinnerLabel;
     private ImageView mImagePreview;
     private Spinner mBarcodeSpinner;
     private AlertDialog mDecodeProgressDialog;
@@ -64,6 +66,7 @@ public class ValidateFragment extends Fragment {
         // Get UI Elements
         mSaveButton = fragmentView.findViewById(R.id.save_image);
         mDeleteButton = fragmentView.findViewById(R.id.delete_image);
+        mSpinnerLabel = fragmentView.findViewById(R.id.spinnerLabel);
         mImagePreview = fragmentView.findViewById(R.id.image_preview);
         mBarcodeSpinner = fragmentView.findViewById(R.id.barcode_spinner);
 
@@ -83,8 +86,14 @@ public class ValidateFragment extends Fragment {
             mPreferenceManager = PreferenceManager.getDefaultSharedPreferences(getContext());
             // Load Image
             loadImage(getImagePath());
-            // Attempt Decode
-            new DecodeBarcodeAsync().execute();
+            // Attempt Decode if Setting enabled
+            if (mPreferenceManager.getBoolean("enable_barcode_decoding", false)) {
+                new DecodeBarcodeAsync().execute();
+            } else {
+                // Remove Spinner
+                mSpinnerLabel.setVisibility(View.GONE);
+                mBarcodeSpinner.setVisibility(View.GONE);
+            }
         } else {
             App.showErrorDialog(getContext(), getString(R.string.error_message_no_image_path));
         }

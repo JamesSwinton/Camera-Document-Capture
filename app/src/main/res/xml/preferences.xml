@@ -62,9 +62,18 @@
             app:iconSpaceReserved="false">
         </EditTextPreference>
 
+        <SwitchPreference
+            android:key="enable_barcode_decoding"
+            android:title="Barcode Decoding"
+            android:summary="Enabled post-processing image to decode visible barcodes"
+            android:defaultValue="false"
+            app:iconSpaceReserved="false">
+        </SwitchPreference>
+
         <EditTextPreference
             android:key="barcode_reader_license"
             android:title="Barcode Reader SDK License"
+            android:dependency="enable_barcode_decoding"
             android:summary="License String for Barcode Reader SDK (available at dynamsoft.com)"
             android:defaultValue="t0068NQAAALIoxwoEDRb4qLOgAs+vmoa0Z6skV14Usxqg0IvjWKKv8f6Dm0QbPpk4BSErjMf0SIndAnWlUHDnT3uDYtP5/ko="
             app:iconSpaceReserved="false">
